@@ -16,10 +16,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.ckan.resource.result.impl.resource;
+package org.ckan.result.impl;
 
 import org.ckan.resource.impl.Resource;
-import org.ckan.resource.result.CKANResult;
+import org.ckan.result.CKANResult;
 
 /**
  *

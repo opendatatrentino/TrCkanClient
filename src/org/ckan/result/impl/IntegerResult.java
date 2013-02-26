@@ -16,7 +16,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.ckan.resource.result;
+package org.ckan.result.impl;
+
+import org.ckan.result.CKANResult;
 
 /**
  *
@@ -24,8 +26,7 @@ package org.ckan.resource.result;
  * @version     1.8
  * @since       2013-02-18
  */
-public abstract class CKANResult
+public class IntegerResult extends CKANResult
 {
-    public String help;
-    public boolean success;
+    public Integer result;
 }

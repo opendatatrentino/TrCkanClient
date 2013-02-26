@@ -16,10 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.ckan.resource.result.impl.dataset;
-
-import org.ckan.resource.result.list.impl.DatasetSearchList;
-import org.ckan.resource.result.CKANResult;
+package org.ckan.result;
 
 /**
  *
@@ -27,7 +24,8 @@ import org.ckan.resource.result.CKANResult;
  * @version     1.8
  * @since       2013-02-18
  */
-public class DatasetSearchResult extends CKANResult
+public abstract class CKANResult
 {
-    public DatasetSearchList result;
+    public String help;
+    public boolean success;
 }

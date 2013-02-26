@@ -28,22 +28,22 @@ import java.util.HashMap;
 import org.ckan.resource.impl.Resource;
 import org.ckan.resource.impl.Revision;
 import org.ckan.resource.impl.User;
-import org.ckan.resource.result.CKANResult;
-import org.ckan.resource.result.list.impl.DatasetList;
-import org.ckan.resource.result.impl.BooleanResult;
-import org.ckan.resource.result.impl.IntegerResult;
-import org.ckan.resource.result.impl.StringResult;
-import org.ckan.resource.result.impl.dataset.DatasetResult;
-import org.ckan.resource.result.impl.group.GroupResult;
-import org.ckan.resource.result.impl.dataset.DatasetSearchResult;
-import org.ckan.resource.result.impl.resource.ResourceResult;
-import org.ckan.resource.result.list.impl.DatasetSearchList;
-import org.ckan.resource.result.impl.revision.RevisionResult;
-import org.ckan.resource.result.impl.user.UserResult;
-import org.ckan.resource.result.list.impl.ActivityList;
-import org.ckan.resource.result.list.impl.RevisionList;
-import org.ckan.resource.result.list.impl.StringList;
-import org.ckan.resource.result.list.impl.UserList;
+import org.ckan.result.CKANResult;
+import org.ckan.result.list.impl.DatasetList;
+import org.ckan.result.impl.BooleanResult;
+import org.ckan.result.impl.IntegerResult;
+import org.ckan.result.impl.StringResult;
+import org.ckan.result.impl.DatasetResult;
+import org.ckan.result.impl.GroupResult;
+import org.ckan.result.impl.DatasetSearchResult;
+import org.ckan.result.impl.ResourceResult;
+import org.ckan.result.list.impl.DatasetSearchList;
+import org.ckan.result.impl.RevisionResult;
+import org.ckan.result.impl.UserResult;
+import org.ckan.result.list.impl.ActivityList;
+import org.ckan.result.list.impl.RevisionList;
+import org.ckan.result.list.impl.StringList;
+import org.ckan.result.list.impl.UserList;
 
 /**
  * The primary interface to this package the Client class is responsible

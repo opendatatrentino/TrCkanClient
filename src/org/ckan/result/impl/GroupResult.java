@@ -16,10 +16,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.ckan.resource.result.list.impl;
+package org.ckan.result.impl;
 
-import java.util.List;
-import org.ckan.resource.impl.Dataset;
+import org.ckan.resource.impl.Group;
+import org.ckan.result.CKANResult;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.ckan.resource.impl.Dataset;
  * @version     1.8
  * @since       2013-02-18
  */
-public class DatasetSearchList {
-    public int count;
-    public List<Dataset> results;
+public class GroupResult extends CKANResult
+{
+    public Group result;
 }

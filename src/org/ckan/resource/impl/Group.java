@@ -21,7 +21,6 @@ package org.ckan.resource.impl;
 
 import java.util.List;
 import org.ckan.resource.CKANResource;
-import org.ckan.resource.result.CKANResult;
 
 /**
  * Represents a CKAN group

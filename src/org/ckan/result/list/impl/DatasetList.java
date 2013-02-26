@@ -16,11 +16,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.ckan.resource.result.list.impl;
+package org.ckan.result.list.impl;
 
 import java.util.List;
-import org.ckan.resource.impl.Revision;
-import org.ckan.resource.result.CKANResult;
+import org.ckan.result.CKANResult;
+import org.ckan.resource.impl.Dataset;
 
 /**
  *
@@ -28,7 +28,7 @@ import org.ckan.resource.result.CKANResult;
  * @version     1.8
  * @since       2013-02-18
  */
-public class RevisionList extends CKANResult
+public class DatasetList extends CKANResult
 {
-    public List<Revision> result;
+    public List<Dataset> result;
 }
