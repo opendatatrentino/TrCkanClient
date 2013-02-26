@@ -41,6 +41,7 @@ import org.ckan.result.list.impl.DatasetSearchList;
 import org.ckan.result.impl.RevisionResult;
 import org.ckan.result.impl.UserResult;
 import org.ckan.result.list.impl.ActivityList;
+import org.ckan.result.list.impl.LicenceList;
 import org.ckan.result.list.impl.RevisionList;
 import org.ckan.result.list.impl.StringList;
 import org.ckan.result.list.impl.UserList;
@@ -510,6 +511,18 @@ public final class Client
     public RevisionList getGroupRevisions(String id, boolean debug) throws CKANException
     {
         return getGsonObjectFromJson(RevisionList.class,postAndReturnTheJSON("/api/action/group_revision_list","{\"id\":\""+id+"\"}",debug),"getGroupRevisions");
+    }
+
+    /********************/
+
+    public LicenceList getLicenceList() throws CKANException
+    {
+        return getLicenceList(false);
+    }
+
+    public LicenceList getLicenceList(boolean debug) throws CKANException
+    {
+        return getGsonObjectFromJson(LicenceList.class,postAndReturnTheJSON("/api/action/licence_list","{}",debug),"getLicenceList");
     }
 
     /********************/

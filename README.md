@@ -1,11 +1,52 @@
-﻿JCKANClient
+JCKANClient
 ====
 
 __A (very much) work in progress__
 
 Provides an interface to a [CKAN 1.8](http://ckan.org) installation.
 
-Major update of code to follow... if I can get the ckan dev list to work :(
+Methods currently implemented (some more thoroughly than others... at the moment):
+
+__ACTIONS API__
+
+* createDataset
+* createGroup
+* deleteDataset
+* deleteGroup
+* findDatasets
+* getActivityDetailList
+* getAmFollowingDataset
+* getAmFollowingUser
+* getCurrentPackageListWithResources
+* getDashboardActivityList
+* getDashboardActivityListHTML
+* getDataset
+* getDatasetFolloweeCount
+* getDatasetFolloweeList
+* getDatasetFollowerCount
+* getDatasetFollowerList
+* getFormatAutoComplete
+* getGroup
+* getGroupActivityList
+* getGroupActivityListHTML
+* getGroupList
+* getGroupListAuthz
+* getGroupPackages
+* getGroupRevisions
+* getLicenceList
+* getPackageActivityList
+* getResource
+* getResourceStatus
+* getRevision
+* getRevisionList
+* getRolesList
+* getUser
+* getUserActivityList
+* getUserActivityListHTML
+* getUserAutocomplete
+* getUserFollowerCount
+* getUserFollowerList
+* getUserList
 
 -------
 
