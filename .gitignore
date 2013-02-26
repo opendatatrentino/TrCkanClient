@@ -4,3 +4,8 @@ dist/*
 docs/*
 lib/*
 test_results/*
+/nbproject
+/build.xml
+/dist
+/build
+/manifest.mf
