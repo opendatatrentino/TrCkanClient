@@ -1,5 +1,5 @@
 /*
-JCKANClient - Data Catalogue Software client in Java
+CKANClient-J - Data Catalogue Software client in Java
 Copyright (C) 2013 Newcastle University
 Copyright (C) 2012 Open Knowledge Foundation
 

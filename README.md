@@ -1,4 +1,4 @@
-JCKANClient
+CKANClient-J
 ====
 
 __A (very much) work in progress__

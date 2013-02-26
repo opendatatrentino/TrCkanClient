@@ -1,5 +1,5 @@
 /*
-JCKANClient - Data Catalogue Software client in Java
+CKANClient-J - Data Catalogue Software client in Java
 Copyright (C) 2013 Newcastle University
 Copyright (C) 2012 Open Knowledge Foundation
 
@@ -36,6 +36,7 @@ import org.ckan.result.impl.StringResult;
 import org.ckan.result.impl.DatasetResult;
 import org.ckan.result.impl.GroupResult;
 import org.ckan.result.impl.DatasetSearchResult;
+import org.ckan.result.impl.MembershipResult;
 import org.ckan.result.impl.ResourceResult;
 import org.ckan.result.list.impl.DatasetSearchList;
 import org.ckan.result.impl.RevisionResult;
@@ -199,10 +200,22 @@ public final class Client
 
     public Group createGroup(Group group, boolean debug) throws CKANException
     {
-        GroupResult r = getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/package_create",getJsonFromGsonObject(group)),"createGroup");
+        GroupResult r = getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/package_create",getJsonFromGsonObject(group),debug),"createGroup");
         return r.result;
     }
 
+    /********************/
+
+    public MembershipResult createMember(String id, String object, String object_type, String capacity) throws CKANException
+    {
+        return createMember(id,object,object_type,capacity,false);
+    }
+
+    public MembershipResult createMember(String id, String object, String object_type, String capacity, boolean debug) throws CKANException
+    {
+        return getGsonObjectFromJson(MembershipResult.class,this.postAndReturnTheJSON("/api/action/member_create","{\"id\":\""+id+"\",\"object\":\""+object+"\",\"object_type\":\""+object_type+"\",\"capacity\":\""+capacity+"\"}",debug),"createMember");
+    }
+    
     /**
     * Deletes a dataset
     *
@@ -525,6 +538,18 @@ public final class Client
         return getGsonObjectFromJson(LicenceList.class,postAndReturnTheJSON("/api/action/licence_list","{}",debug),"getLicenceList");
     }
 
+    /********************/ /** WIP **/
+
+    /*public LicenceList getLicenceList() throws CKANException
+    {
+        return getLicenceList(false);
+    }*/
+
+    public void getMemberList(String id, String object_type, String capacity, boolean debug) throws CKANException
+    {
+        getGsonObjectFromJson(LicenceList.class,postAndReturnTheJSON("/api/action/member_list","{\"id\":\""+id+"\",\"object_type\":\""+object_type+"\",\"capacity\":\""+capacity+"\"}",debug),"getMemberList");
+    }
+    
     /********************/
 
     public ActivityList getPackageActivityList(String id) throws CKANException

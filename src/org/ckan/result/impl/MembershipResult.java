@@ -16,15 +16,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.ckan.result.factory;
+package org.ckan.result.impl;
+
+import org.ckan.resource.impl.Membership;
+import org.ckan.result.CKANResult;
 
 /**
  *
  * @author      Andrew Martin <andrew.martin@ncl.ac.uk>
  * @version     1.8
- * @since       2013-02-18
+ * @since       2013-02-26
  */
-public class CKANResultFactory
+public class MembershipResult extends CKANResult
 {
-    
+    public Membership result;
 }
