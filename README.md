@@ -13,4 +13,6 @@ Notes to self:
 
 Add factory/ies for results... and maybe for requests too?
 Add param objects or keep overloaded methods?
+Refactor code again once the API methods are complete
+Some people are prob not gonna like Allman braces/indenting in java
 
