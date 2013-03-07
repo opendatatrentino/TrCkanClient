@@ -508,6 +508,42 @@ public final class Client
     
     /********************/
 
+    public ActivityList getRecentlyChangedDatasetsActivityList() throws CKANException
+    {
+        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/recently_changed_packages_activity_list","{}"),"getRecentlyChangedDatasetsActivityList");
+    }
+
+    /********************/
+
+    public String getRecentlyChangedDatasetsActivityListHTML(String id) throws CKANException
+    {
+        StringResult s = getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/recently_changed_packages_activity_list_html","{\"id\":\""+id+"\"}"),"getRecentlyChangedDatasetsActivityListHTML");
+        return s.result;
+    }
+
+    /********************/ /** WIP **/
+
+    public void getRelated(String id) throws CKANException
+    {
+        getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/related_show","{\"id\":\""+id+"\"}"),"getRelated");
+    }
+
+    /********************/ /** WIP **/
+
+    public void getRelatedList(String id, Dataset ds) throws CKANException
+    {
+        if(id!=null&&!id.isEmpty())
+        {
+            getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/related_list","{\"id\":\""+id+"\"}"),"getRelatedList");
+        }
+        else
+        {
+            getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/related_list","{\"dataset\":\""+ds.toJson(gson) +"\"}"),"getRelatedList");
+        }
+    }
+
+    /********************/
+
     public Resource getResource(String id) throws CKANException
     {
         ResourceResult rr = getGsonObjectFromJson(ResourceResult.class,postAndReturnTheJSON("/api/action/resource_show","{\"id\":\""+id+"\"}"),"getResource");
