@@ -23,8 +23,10 @@ import org.ckan.resource.impl.Dataset;
 import org.ckan.resource.impl.Group;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 import org.ckan.resource.impl.Resource;
 import org.ckan.resource.impl.Revision;
 import org.ckan.resource.impl.User;
@@ -38,7 +40,6 @@ import org.ckan.result.impl.GroupResult;
 import org.ckan.result.impl.DatasetSearchResult;
 import org.ckan.result.impl.MembershipResult;
 import org.ckan.result.impl.ResourceResult;
-import org.ckan.result.list.impl.DatasetSearchList;
 import org.ckan.result.impl.RevisionResult;
 import org.ckan.result.impl.UserResult;
 import org.ckan.result.list.impl.ActivityList;
@@ -59,8 +60,15 @@ public final class Client
 {
     protected Connection connection = null;
     protected Gson gson;
-    private int DEFAULT_ROWS = 100;
+    private int DEFAULT_SEARCH_FACET_LIMIT = -1; /** Unlimited **/
+    private int DEFAULT_SEARCH_FACET_MIN_COUNT = 1;
+    private int DEFAULT_SEARCH_FIRST_ROW = 0;
+    private int DEFAULT_SEARCH_MAX_RETURNED_ROWS = 100;
+    private boolean DEBUG = false;
+    private boolean DEBUG_ALL_CALLS = false;
 
+    private Client(){}
+    
     /**
     * Constructs a new Client for making requests to a remote CKAN instance.
     *
@@ -75,6 +83,86 @@ public final class Client
         this.gson = new Gson();
     }
 
+    /**
+     * Same as default constructor, but allows you to specify
+     * whether all calls will be debugged<br/>
+     * <br/>
+     * WARNING: Specifying false for debugAllCalls does not
+     * permanently turn off debugging, so debugThis() calls
+     * will still work
+     * 
+     * @param c
+     * @param apikey
+     * @param debugAllCalls 
+     */
+    public Client(Connection c, String apikey, boolean debugAllCalls)
+    {
+        this.connection = c;
+        this.connection.setApiKey(apikey);
+        this.gson = new Gson();
+        this.DEBUG_ALL_CALLS = debugAllCalls;
+    }
+
+    /**
+     * Use this to return the JSON for this client call ONLY,
+     * the client call after that will not be debugged unless
+     * you specify debugThis() again
+     * 
+     * @return Client
+     */
+    public Client debugThis()
+    {
+        this.DEBUG = true;
+        return this;
+    }
+
+    /**
+     * Use this to return the JSON for this client call ONLY,
+     * the client call after that will not be debugged unless
+     * you specify debug(true) again.
+     * 
+     * This differs from debugThis() as you can set debug on every
+     * call a use your own code to set a default. E.g....<br/>
+     * <br/>
+     * boolean myDebugOption = true;<br/>
+     * <br/>
+     * Client.debugThis().methodCall(); //Debugged<br/>
+     * Client.debugThis(myDebugOption).methodCall(); //Debugged<br/>
+     * Client.debugThis().methodCall(); //Debugged<br/>
+     * Client.debugThis(false).methodCall(); //Not Debugged<br/>
+     * Client.debugThis().methodCall(); //Debugged<br/>
+     * Client.debugThis(myDebugOption).methodCall(); //Debugged<br/>
+     * Client.methodCall() //Not Debugged<br/>
+     * myDebugOption = false;<br/>
+     * Client.debugThis(myDebugOption).methodCall(); //Not Debugged<br/>
+     * Client.debugThis().methodCall(); //Debugged<br/>
+     * Client.methodCall() //Not Debugged<br/>
+     * 
+     * @return Client
+     */
+    public Client debugThis(boolean debug)
+    {
+        this.DEBUG = debug;
+        return this;
+    }
+    
+    /**
+     * Allows you to permanently turn the debugging
+     * on or off, this means even a call without
+     * specifying debugThis() would be debugged.<br/>
+     * <br/>
+     * WARNING: This also overrides debugThis(false)
+     * 
+     * @param debugAllCalls
+     * @return 
+     */
+    public Client debugAllCalls(boolean debugAllCalls)
+    {
+        this.DEBUG = debugAllCalls;
+        this.DEBUG_ALL_CALLS = debugAllCalls;
+        return this;
+    }
+    
     /**
     * Loads a JSON string into a class of the specified type.
     */
@@ -127,32 +215,28 @@ public final class Client
     
     protected String postAndReturnTheJSON(String uri, String jsonParams) throws CKANException
     {
-        return postAndReturnTheJSON(uri,jsonParams,false);
-    }
-    
-    protected String postAndReturnTheJSON(String uri, String jsonParams, boolean debug) throws CKANException
-    {
         String json = this.connection.post(uri,jsonParams);
-        if(debug)
+        if(DEBUG_ALL_CALLS||DEBUG)
         {
             System.out.println(json);
+            DEBUG = false; /** Reset debugging to default (false) **/
         }
         return json;
     }
 
-    protected <T> T getAGsonResult(Class<T> cls, String uri, String jsonParams, String action, boolean debug) throws CKANException
+    protected <T> T getAGsonResult(Class<T> cls, String uri, String jsonParams, String action) throws CKANException
     {
-        return getGsonObjectFromJson(cls,postAndReturnTheJSON(uri,jsonParams,debug),action);
+        return getGsonObjectFromJson(cls,postAndReturnTheJSON(uri,jsonParams),action);
     }
     
-    protected DatasetList getADatasetList(String uri, String jsonParams, String action, boolean debug) throws CKANException
+    protected DatasetList getADatasetList(String uri, String jsonParams, String action) throws CKANException
     {
-        return getAGsonResult(DatasetList.class,uri,jsonParams,action,debug);
+        return getAGsonResult(DatasetList.class,uri,jsonParams,action);
     }
 
-    protected UserList getAUserList(String uri, String jsonParams, String action, boolean debug) throws CKANException
+    protected UserList getAUserList(String uri, String jsonParams, String action) throws CKANException
     {
-        return getAGsonResult(UserList.class,uri,jsonParams,action,debug);
+        return getAGsonResult(UserList.class,uri,jsonParams,action);
     }
     
     public Gson getGsonObject()
@@ -175,12 +259,7 @@ public final class Client
     */
     public Dataset createDataset(Dataset dataset) throws CKANException
     {
-        return createDataset(dataset,false);
-    }
-
-    public Dataset createDataset(Dataset dataset, boolean debug) throws CKANException
-    {
-        DatasetResult dr = getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_create",getJsonFromGsonObject(dataset),debug),"createDataset");
+        DatasetResult dr = getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_create",getJsonFromGsonObject(dataset)),"createDataset");
         return dr.result;
     }
 
@@ -196,12 +275,7 @@ public final class Client
     */
     public Group createGroup(Group group) throws CKANException
     {
-        return createGroup(group,false);
-    }
-
-    public Group createGroup(Group group, boolean debug) throws CKANException
-    {
-        GroupResult r = getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/package_create",getJsonFromGsonObject(group),debug),"createGroup");
+        GroupResult r = getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/package_create",getJsonFromGsonObject(group)),"createGroup");
         return r.result;
     }
 
@@ -209,12 +283,7 @@ public final class Client
 
     public MembershipResult createMember(String id, String object, String object_type, String capacity) throws CKANException
     {
-        return createMember(id,object,object_type,capacity,false);
-    }
-
-    public MembershipResult createMember(String id, String object, String object_type, String capacity, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(MembershipResult.class,this.postAndReturnTheJSON("/api/action/member_create","{\"id\":\""+id+"\",\"object\":\""+object+"\",\"object_type\":\""+object_type+"\",\"capacity\":\""+capacity+"\"}",debug),"createMember");
+        return getGsonObjectFromJson(MembershipResult.class,this.postAndReturnTheJSON("/api/action/member_create","{\"id\":\""+id+"\",\"object\":\""+object+"\",\"object_type\":\""+object_type+"\",\"capacity\":\""+capacity+"\"}"),"createMember");
     }
     
     /**
@@ -227,12 +296,7 @@ public final class Client
     */
     public void deleteDataset(String name) throws CKANException
     {
-        deleteDataset(name,false);
-    }
-
-    public void deleteDataset(String name, boolean debug) throws CKANException
-    {
-        getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_delete","{\"id\":\""+name+"\"}",debug),"deleteDataset");
+        getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_delete","{\"id\":\""+name+"\"}"),"deleteDataset");
     }
 
     /**
@@ -245,132 +309,77 @@ public final class Client
     */
     public void deleteGroup(String name) throws CKANException
     {
-        deleteGroup(name,false);
-    }
-
-    public void deleteGroup(String name, boolean debug) throws CKANException
-    {
-        getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/group_delete","{\"id\":\""+name+"\"}",debug),"deleteGroup");
+        getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/group_delete","{\"id\":\""+name+"\"}"),"deleteGroup");
     }
 
     /********************/
 
     public ActivityList getActivityDetailList(String id) throws CKANException
     {
-        return getActivityDetailList(id,false);
-    }
-
-    public ActivityList getActivityDetailList(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/activity_detail_list","{\"id\":\""+id+"\"}",debug),"getActivityDetailList");
+        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/activity_detail_list","{\"id\":\""+id+"\"}"),"getActivityDetailList");
     }
 
     /********************/
     
     public BooleanResult getAmFollowingDataset(String id) throws CKANException
     {
-        return getAmFollowingDataset(id,false);
-    }
-
-    public BooleanResult getAmFollowingDataset(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(BooleanResult.class,postAndReturnTheJSON("/api/action/am_following_dataset","{\"id\":\""+id+"\"}",debug),"amFollowingDataset");
+        return getGsonObjectFromJson(BooleanResult.class,postAndReturnTheJSON("/api/action/am_following_dataset","{\"id\":\""+id+"\"}"),"amFollowingDataset");
     }
 
     /********************/
     
     public BooleanResult getAmFollowingUser(String id) throws CKANException
     {
-        return getAmFollowingUser(id,false);
-    }
-    
-    public BooleanResult getAmFollowingUser(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(BooleanResult.class,postAndReturnTheJSON("/api/action/am_following_user","{\"id\":\""+id+"\"}",debug),"amFollowingUser");
+        return getGsonObjectFromJson(BooleanResult.class,postAndReturnTheJSON("/api/action/am_following_user","{\"id\":\""+id+"\"}"),"amFollowingUser");
     }
 
     /********************/
 
     public DatasetList getCurrentPackageListWithResources(int limit, int page) throws CKANException
     {
-        return getCurrentPackageListWithResources(limit,page,false);
-    }
-    
-    public DatasetList getCurrentPackageListWithResources(int limit, int page, boolean debug) throws CKANException
-    {
-        return getADatasetList("/api/action/current_package_list_with_resources","{\"limit\":\""+limit+"\",\"page\":\""+page+"\"}","getCurrentPackageListWithResources",debug);
+        return getADatasetList("/api/action/current_package_list_with_resources","{\"limit\":\""+limit+"\",\"page\":\""+page+"\"}","getCurrentPackageListWithResources");
     }
     
     /********************/
 
     public ActivityList getDashboardActivityList(String id) throws CKANException
     {
-        return getDashboardActivityList(id,false);
-    }
-
-    public ActivityList getDashboardActivityList(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/dashboard_activity_list","{\"id\":\""+id+"\"}",debug),"getDashboardActivityList");
+        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/dashboard_activity_list","{\"id\":\""+id+"\"}"),"getDashboardActivityList");
     }
 
     /********************/
 
     public StringResult getDashboardActivityListHTML(String id) throws CKANException
     {
-        return getDashboardActivityListHTML(id,false);
-    }
-
-    public StringResult getDashboardActivityListHTML(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/dashboard_activity_list_html","{\"id\":\""+id+"\"}",debug),"getDashboardActivityListHTML");
+        return getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/dashboard_activity_list_html","{\"id\":\""+id+"\"}"),"getDashboardActivityListHTML");
     }
 
     /********************/
 
     public IntegerResult getDatasetFolloweeCount(String id) throws CKANException
     {
-        return getDatasetFolloweeCount(id,false);
-    }
-
-    public IntegerResult getDatasetFolloweeCount(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(IntegerResult.class,postAndReturnTheJSON("/api/action/dataset_followee_count","{\"id\":\""+id+"\"}",debug),"getDatasetFolloweeCount");
+        return getGsonObjectFromJson(IntegerResult.class,postAndReturnTheJSON("/api/action/dataset_followee_count","{\"id\":\""+id+"\"}"),"getDatasetFolloweeCount");
     }
 
     /********************/
 
     public DatasetList getDatasetFolloweeList(String id) throws CKANException
     {
-        return getDatasetFolloweeList(id,false);
-    }
-
-    public DatasetList getDatasetFolloweeList(String id, boolean debug) throws CKANException
-    {
-        return getADatasetList("/api/action/dataset_followee_list","{\"id\":\""+id+"\"}","getDatasetFolloweeList",debug);
+        return getADatasetList("/api/action/dataset_followee_list","{\"id\":\""+id+"\"}","getDatasetFolloweeList");
     }
 
     /********************/
 
     public IntegerResult getDatasetFollowerCount(String id) throws CKANException
     {
-        return getDatasetFollowerCount(id,false);
-    }
-
-    public IntegerResult getDatasetFollowerCount(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(IntegerResult.class,postAndReturnTheJSON("/api/action/dataset_follower_count","{\"id\":\""+id+"\"}",debug),"getDatasetFollowerCount");
+        return getGsonObjectFromJson(IntegerResult.class,postAndReturnTheJSON("/api/action/dataset_follower_count","{\"id\":\""+id+"\"}"),"getDatasetFollowerCount");
     }
 
     /********************/
 
     public DatasetList getDatasetFollowerList(String id) throws CKANException
     {
-        return getDatasetFollowerList(id,false);
-    }
-
-    public DatasetList getDatasetFollowerList(String id, boolean debug) throws CKANException
-    {
-        return getADatasetList("/api/action/dataset_follower_list","{\"id\":\""+id+"\"}","getDatasetFollowerList",debug);
+        return getADatasetList("/api/action/dataset_follower_list","{\"id\":\""+id+"\"}","getDatasetFollowerList");
     }
 
     /**
@@ -385,12 +394,7 @@ public final class Client
     */
     public Dataset getDataset(String name) throws CKANException
     {
-        return getDataset(name, false);
-    }
-
-    public Dataset getDataset(String name, boolean debug) throws CKANException
-    {
-        DatasetResult dr = getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_show","{\"id\":\""+name+"\"}",debug),"getDataset");
+        DatasetResult dr = getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_show","{\"id\":\""+name+"\"}"),"getDataset");
         return dr.result;
     }
 
@@ -398,12 +402,7 @@ public final class Client
 
     public StringList getFormatAutocomplete(String query, int limit) throws CKANException
     {
-        return getFormatAutocomplete(query,limit,false);
-    }
-
-    public StringList getFormatAutocomplete(String query, int limit, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/format_autocomplete","{\"q\":\""+query+"\",\"limit\":\""+limit+"\"}",debug),"getFormatAutocomplete");
+        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/format_autocomplete","{\"q\":\""+query+"\",\"limit\":\""+limit+"\"}"),"getFormatAutocomplete");
     }
 
     /**
@@ -418,12 +417,7 @@ public final class Client
     */
     public Group getGroup(String id) throws CKANException
     {
-        return getGroup(id,false);
-    }
-
-    public Group getGroup(String id, boolean debug) throws CKANException
-    {
-        GroupResult r = getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/group_show","{\"id\":\""+id+"\"}",debug),"getGroup");
+        GroupResult r = getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/group_show","{\"id\":\""+id+"\"}"),"getGroup");
         return r.result;
     }
 
@@ -431,34 +425,19 @@ public final class Client
 
     public ActivityList getGroupActivityList(String id) throws CKANException
     {
-        return getGroupActivityList(id,false);
-    }
-
-    public ActivityList getGroupActivityList(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/group_activity_list","{\"id\":\""+id+"\"}",debug),"getGroupActivityList");
+        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/group_activity_list","{\"id\":\""+id+"\"}"),"getGroupActivityList");
     }
 
     /********************/
 
     public StringResult getGroupActivityListHTML(String id) throws CKANException
     {
-        return getGroupActivityListHTML(id,false);
-    }
-
-    public StringResult getGroupActivityListHTML(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/group_activity_list_html","{\"id\":\""+id+"\"}",debug),"getGroupActivityList");
+        return getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/group_activity_list_html","{\"id\":\""+id+"\"}"),"getGroupActivityList");
     }
 
     /*******************/ /** WIP **/
 
     public StringList getGroupList() throws CKANException
-    {
-        return getGroupList(false);
-    }
-
-    public StringList getGroupList(boolean debug) throws CKANException
     {
         /*
          * OPT DEPR : order_by <- don't include?
@@ -468,105 +447,70 @@ public final class Client
          * OPT : all_fields - full group instead of just names (i.e. verbosity)
          */
         
-        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/group_list","{\"groups\":[\"test-group\"]}",debug),"getGroupList");
+        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/group_list","{\"groups\":[\"test-group\"]}"),"getGroupList");
     }
 
     /*******************/
 
     public StringList getGroupListAuthz(boolean availableOnly) throws CKANException
     {
-        return getGroupListAuthz(availableOnly, false);
-    }
-
-    public StringList getGroupListAuthz(boolean availableOnly, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/group_list_authz","{\"available_only\":\""+availableOnly+"\"}",debug),"getGroupListAuthz");
+        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/group_list_authz","{\"available_only\":\""+availableOnly+"\"}"),"getGroupListAuthz");
     }
 
     /*******************/
 
     public DatasetList getGroupPackages(String id, int limit) throws CKANException
     {
-        return getGroupPackages(id,limit,false);
-    }
-
-    public DatasetList getGroupPackages(String id, int limit, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(DatasetList.class,postAndReturnTheJSON("/api/action/group_package_show","{\"id\":\""+id+"\",\"limit\":\""+limit+"\"}",debug),"getGroupPackages");
+        return getGsonObjectFromJson(DatasetList.class,postAndReturnTheJSON("/api/action/group_package_show","{\"id\":\""+id+"\",\"limit\":\""+limit+"\"}"),"getGroupPackages");
     }
 
     /*******************/
 
     public RevisionList getGroupRevisions(String id) throws CKANException
     {
-        return getGroupRevisions(id,false);
-    }
-
-    public RevisionList getGroupRevisions(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(RevisionList.class,postAndReturnTheJSON("/api/action/group_revision_list","{\"id\":\""+id+"\"}",debug),"getGroupRevisions");
+        return getGsonObjectFromJson(RevisionList.class,postAndReturnTheJSON("/api/action/group_revision_list","{\"id\":\""+id+"\"}"),"getGroupRevisions");
     }
 
     /********************/
 
     public LicenceList getLicenceList() throws CKANException
     {
-        return getLicenceList(false);
-    }
-
-    public LicenceList getLicenceList(boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(LicenceList.class,postAndReturnTheJSON("/api/action/licence_list","{}",debug),"getLicenceList");
+        return getGsonObjectFromJson(LicenceList.class,postAndReturnTheJSON("/api/action/licence_list","{}"),"getLicenceList");
     }
 
     /********************/ /** WIP **/
 
-    public void getMemberList(String id, String object_type, String capacity, boolean debug) throws CKANException
+    public void getMemberList(String id, String object_type, String capacity) throws CKANException
     {
-        getGsonObjectFromJson(LicenceList.class,postAndReturnTheJSON("/api/action/member_list","{\"id\":\""+id+"\",\"object_type\":\""+object_type+"\",\"capacity\":\""+capacity+"\"}",debug),"getMemberList");
+        getGsonObjectFromJson(LicenceList.class,postAndReturnTheJSON("/api/action/member_list","{\"id\":\""+id+"\",\"object_type\":\""+object_type+"\",\"capacity\":\""+capacity+"\"}"),"getMemberList");
     }
     
     /********************/
 
     public ActivityList getPackageActivityList(String id) throws CKANException
     {
-        return getPackageActivityList(id,false);
-    }
-
-    public ActivityList getPackageActivityList(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/package_activity_list","{\"id\":\""+id+"\"}",debug),"getPackageActivityList");
+        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/package_activity_list","{\"id\":\""+id+"\"}"),"getPackageActivityList");
     }
 
     /********************/  /** WIP **/
 
-    public void getPackageRelationships(String id, boolean debug) throws CKANException
+    public void getPackageRelationships(String id) throws CKANException
     {
-        getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/package_relationships_list","{\"id\":\""+id+"\"}",debug),"getPackageRelationships");
+        getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/package_relationships_list","{\"id\":\""+id+"\"}"),"getPackageRelationships");
     }
     
     /********************/
 
     public RevisionList getPackageRevisions(String id) throws CKANException
     {
-        return getPackageRevisions(id,false);
-    }
-
-    public RevisionList getPackageRevisions(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(RevisionList.class,postAndReturnTheJSON("/api/action/package_revision_list","{\"id\":\""+id+"\"}",debug),"getPackageRevisions");
+        return getGsonObjectFromJson(RevisionList.class,postAndReturnTheJSON("/api/action/package_revision_list","{\"id\":\""+id+"\"}"),"getPackageRevisions");
     }
     
     /********************/
 
     public Resource getResource(String id) throws CKANException
     {
-        return getResource(id,false);
-    }
-
-    public Resource getResource(String id, boolean debug) throws CKANException
-    {
-        ResourceResult rr = getGsonObjectFromJson(ResourceResult.class,postAndReturnTheJSON("/api/action/resource_show","{\"id\":\""+id+"\"}",debug),"getResource");
+        ResourceResult rr = getGsonObjectFromJson(ResourceResult.class,postAndReturnTheJSON("/api/action/resource_show","{\"id\":\""+id+"\"}"),"getResource");
         return rr.result;
     }
 
@@ -574,12 +518,7 @@ public final class Client
 
     public void getResourceStatus(String id) throws CKANException
     {
-        /*return*/ getResourceStatus(id,false);
-    }
-
-    public void getResourceStatus(String id, boolean debug) throws CKANException
-    {
-        getGsonObjectFromJson(ResourceResult.class,postAndReturnTheJSON("/api/action/resource_status_show","{\"id\":\""+id+"\"}",debug),"getResourceStatus");
+        getGsonObjectFromJson(ResourceResult.class,postAndReturnTheJSON("/api/action/resource_status_show","{\"id\":\""+id+"\"}"),"getResourceStatus");
         /*return rr.result;*/
     }
 
@@ -587,24 +526,14 @@ public final class Client
 
     public StringList getRevisionList() throws CKANException
     {
-        return getRevisionList(false);
-    }
-
-    public StringList getRevisionList(boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/revision_list","{\"q\":\"\"}",debug),"getRevisionList");
+        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/revision_list","{\"q\":\"\"}"),"getRevisionList");
     }
 
     /********************/
 
     public Revision getRevision(String id) throws CKANException
     {
-        return getRevision(id,false);
-    }
-
-    public Revision getRevision(String id, boolean debug) throws CKANException
-    {
-        RevisionResult rr = getGsonObjectFromJson(RevisionResult.class,postAndReturnTheJSON("/api/action/revision_show","{\"id\":\""+id+"\"}",debug),"getRevision");
+        RevisionResult rr = getGsonObjectFromJson(RevisionResult.class,postAndReturnTheJSON("/api/action/revision_show","{\"id\":\""+id+"\"}"),"getRevision");
         return rr.result;
     }
 
@@ -612,105 +541,60 @@ public final class Client
 
     public void getRolesList(String domainObject, String user, String authorizationGroup) throws CKANException
     {
-        /*return*/ getRolesList(domainObject, user, authorizationGroup, false);
-    }
-
-    public void getRolesList(String domainObject, String user, String authorizationGroup, boolean debug) throws CKANException
-    {
-        /*return*/ getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/roles_show","{\"domain_object\":\""+domainObject+"\",\"user\":\""+user+"\",\"authorization_group\":\""+authorizationGroup+"\"}",debug),"getRolesList");
+        /*return*/ getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/roles_show","{\"domain_object\":\""+domainObject+"\",\"user\":\""+user+"\",\"authorization_group\":\""+authorizationGroup+"\"}"),"getRolesList");
     }
 
     /********************/
 
     public ActivityList getUserActivityList(String id) throws CKANException
     {
-        return getUserActivityList(id,false);
-    }
-
-    public ActivityList getUserActivityList(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/user_activity_list","{\"id\":\""+id+"\"}",debug),"getUserActivityList");
+        return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/user_activity_list","{\"id\":\""+id+"\"}"),"getUserActivityList");
     }
 
     /********************/
 
     public StringResult getUserActivityListHTML(String id) throws CKANException
     {
-        return getUserActivityListHTML(id,false);
-    }
-
-    public StringResult getUserActivityListHTML(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/user_activity_list_html","{\"id\":\""+id+"\"}",debug),"getUserActivityListHTML");
+        return getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/user_activity_list_html","{\"id\":\""+id+"\"}"),"getUserActivityListHTML");
     }
     
     /********************/
 
     public UserList getUserAutocomplete(String query, int limit) throws CKANException
     {
-        return getUserAutocomplete(query,limit,false);
-    }
-
-    public UserList getUserAutocomplete(String query, int limit, boolean debug) throws CKANException
-    {
-        return getAUserList("/api/action/user_autocomplete","{\"q\":\""+query+"\",\"limit\":\""+limit+"\"}","getUserAutocomplete",debug);
+        return getAUserList("/api/action/user_autocomplete","{\"q\":\""+query+"\",\"limit\":\""+limit+"\"}","getUserAutocomplete");
     }
 
     /********************/
 
     public IntegerResult getUserFollowerCount(String id) throws CKANException
     {
-        return getUserFollowerCount(id,false);
-    }
-
-    public IntegerResult getUserFollowerCount(String id, boolean debug) throws CKANException
-    {
-        return getGsonObjectFromJson(IntegerResult.class,postAndReturnTheJSON("/api/action/user_follower_count","{\"id\":\""+id+"\"}",debug),"getUserFollowerCount");
+        return getGsonObjectFromJson(IntegerResult.class,postAndReturnTheJSON("/api/action/user_follower_count","{\"id\":\""+id+"\"}"),"getUserFollowerCount");
     }
 
     /********************/
 
     public UserList getUserFollowerList(String id) throws CKANException
     {
-        return getUserFollowerList(id,false);
-    }
-
-    public UserList getUserFollowerList(String id, boolean debug) throws CKANException
-    {
-        return getAUserList("/api/action/user_follower_list","{\"id\":\""+id+"\"}","getUserFollowerList",debug);
+        return getAUserList("/api/action/user_follower_list","{\"id\":\""+id+"\"}","getUserFollowerList");
     }
 
     /********************/
 
     public UserList getUserList(String query, User.OrderBy orderBy) throws CKANException
     {
-        return getUserList(query,orderBy,false);
-    }
-
-    public UserList getUserList(String query, User.OrderBy orderBy, boolean debug) throws CKANException
-    {
-        return getAUserList("/api/action/user_list","{\"q\":\""+query+"\",\"order_by\":\""+orderBy+"\"}","getUserList",debug);
+        return getAUserList("/api/action/user_list","{\"q\":\""+query+"\",\"order_by\":\""+orderBy+"\"}","getUserList");
     }
     
     /********************/
 
     public User getUser(String id) throws CKANException
     {
-        return getUser(id,false);
-    }
-
-    public User getUser(String id, boolean debug) throws CKANException
-    {
-        UserResult ur = getGsonObjectFromJson(UserResult.class,postAndReturnTheJSON("/api/action/user_show","{\"id\":\""+id+"\"}",debug),"getUser");
+        UserResult ur = getGsonObjectFromJson(UserResult.class,postAndReturnTheJSON("/api/action/user_show","{\"id\":\""+id+"\"}"),"getUser");
         return ur.result;
     }
 
     public User getUser(User user) throws CKANException
-    {
-        return getUser(user,false);
-    }
-
-    public User getUser(User user, boolean debug) throws CKANException
     {
         String uid = user.getId();
         String name = user.getName();
@@ -718,39 +602,68 @@ public final class Client
          * failing that just send a blank string
          */
         String id = uid!=null&&!uid.equals("")?uid:name!=null&&!name.equals("")?name:"";
-        return getUser(id,debug);
+        return getUser(id);
     }
 
     /********************/ /** WIP **/
 
     public DatasetSearchResult searchDatasets(String q) throws CKANException
     {
-        return searchDatasets(q,"",DEFAULT_ROWS,false);
-    }
-
-    public DatasetSearchResult searchDatasets(String q, boolean debug) throws CKANException
-    {
-        return searchDatasets(q,"",DEFAULT_ROWS,debug);
+        return searchDatasets(q,"",DEFAULT_SEARCH_MAX_RETURNED_ROWS,"",DEFAULT_SEARCH_FIRST_ROW,"",true,DEFAULT_SEARCH_FACET_MIN_COUNT,DEFAULT_SEARCH_FACET_LIMIT,null);
     }
 
     public DatasetSearchResult searchDatasets(String q, String filters) throws CKANException
     {
-        return searchDatasets(q,filters,DEFAULT_ROWS,false);
-    }
-
-    public DatasetSearchResult searchDatasets(String q, String filters, boolean debug) throws CKANException
-    {
-        return searchDatasets(q,filters,DEFAULT_ROWS,debug);
+        return searchDatasets(q,filters,DEFAULT_SEARCH_MAX_RETURNED_ROWS,"",DEFAULT_SEARCH_FIRST_ROW,"",true,DEFAULT_SEARCH_FACET_MIN_COUNT,DEFAULT_SEARCH_FACET_LIMIT,null);
     }
 
     public DatasetSearchResult searchDatasets(String q, String filters, int rows) throws CKANException
     {
-        return searchDatasets(q,filters,rows,false);
+        return searchDatasets(q,filters,rows,"",DEFAULT_SEARCH_FIRST_ROW,"",true,DEFAULT_SEARCH_FACET_MIN_COUNT,DEFAULT_SEARCH_FACET_LIMIT,null);
     }
 
-    public DatasetSearchResult searchDatasets(String q, String filters, int rows, boolean debug) throws CKANException
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows, String sort) throws CKANException
     {
-        return getGsonObjectFromJson(DatasetSearchResult.class,postAndReturnTheJSON("/api/action/package_search","{\"q\":\""+q+"\",\"fq\":\""+filters+"\",\"rows\":\""+rows+"\"}",debug),"searchPackages");
+        return searchDatasets(q,filters,rows,sort,DEFAULT_SEARCH_FIRST_ROW,"",true,DEFAULT_SEARCH_FACET_MIN_COUNT,DEFAULT_SEARCH_FACET_LIMIT,null);
+    }
+
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows, String sort, int start) throws CKANException
+    {
+        return searchDatasets(q,filters,rows,sort,start,"",true,DEFAULT_SEARCH_FACET_MIN_COUNT,DEFAULT_SEARCH_FACET_LIMIT,null);
+    }
+    
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows, String sort, int start, String qf) throws CKANException
+    {
+        return searchDatasets(q,filters,rows,sort,start,qf,true,DEFAULT_SEARCH_FACET_MIN_COUNT,DEFAULT_SEARCH_FACET_LIMIT,null);
+    }
+    
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows, String sort, int start, String qf, boolean isFacetedResult) throws CKANException
+    {
+        return searchDatasets(q,filters,rows,sort,start,qf,isFacetedResult,DEFAULT_SEARCH_FACET_MIN_COUNT,DEFAULT_SEARCH_FACET_LIMIT,null);
+    }
+    
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows, String sort, int start, String qf, boolean isFacetedResult, int facetMinCount) throws CKANException
+    {
+        return searchDatasets(q,filters,rows,sort,start,qf,isFacetedResult,facetMinCount,DEFAULT_SEARCH_FACET_LIMIT,null);
+    }
+        
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows, String sort, int start, String qf, boolean isFacetedResult, int facetMinCount, int facetLimit) throws CKANException
+    {
+        return searchDatasets(q,filters,rows,sort,start,qf,isFacetedResult,facetMinCount,facetLimit,null);
+    }
+    
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows, String sort, int start, String qf, boolean isFacetedResult, int facetMinCount, int facetLimit, List<String> facetField) throws CKANException
+    {
+        /*
+         * ,\"qf\":\""+qf+"\" -> removed from JSON
+         * 
+         * Dismax query fields not figured out yet
+         */
+        if(facetField==null)
+        {
+            facetField = new ArrayList<String>();
+        }
+        return getGsonObjectFromJson(DatasetSearchResult.class,postAndReturnTheJSON("/api/action/package_search","{\"q\":\""+q+"\",\"fq\":\""+filters+"\",\"rows\":\""+rows+"\",\"sort\":\""+sort+"\",\"start\":\""+start+"\",\"facet\":\""+isFacetedResult+"\",\"facet.mincount\":\""+facetMinCount+"\",\"facet.limit\":\""+facetLimit+"\",\"facet.field\":\""+gson.toJson(facetField)+"\"}"),"searchPackages");
     }
 }
 
