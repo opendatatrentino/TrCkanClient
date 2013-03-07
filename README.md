@@ -9,11 +9,14 @@ Methods currently implemented (some more thoroughly than others... at the moment
 
 __ACTIONS API__
 
+(WIP = Work In Progress)
+
 * createDataset
 * createGroup
+* createMember
 * deleteDataset
 * deleteGroup
-* findDatasets
+* --findDatasets-- -> replaced by searchDatasets
 * getActivityDetailList
 * getAmFollowingDataset
 * getAmFollowingUser
@@ -29,17 +32,20 @@ __ACTIONS API__
 * getGroup
 * getGroupActivityList
 * getGroupActivityListHTML
-* getGroupList
+* getGroupList - WIP
 * getGroupListAuthz
 * getGroupPackages
 * getGroupRevisions
 * getLicenceList
+* getMemberList - WIP
 * getPackageActivityList
+* getPackageRelationships - WIP
+* getPackageRevisions
 * getResource
-* getResourceStatus
+* getResourceStatus - WIP
 * getRevision
-* getRevisionList
-* getRolesList
+* getRevisionList - WIP
+* getRolesList - WIP
 * getUser
 * getUserActivityList
 * getUserActivityListHTML
@@ -47,6 +53,8 @@ __ACTIONS API__
 * getUserFollowerCount
 * getUserFollowerList
 * getUserList
+* searchDatasets - WIP
+
 
 -------
 

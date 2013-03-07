@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.ckan.result.impl;
 
-import org.ckan.result.list.impl.DatasetSearchList;
 import org.ckan.result.CKANResult;
+import org.ckan.result.list.impl.DatasetSearchList;
 
 /**
  *

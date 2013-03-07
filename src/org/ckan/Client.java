@@ -59,6 +59,7 @@ public final class Client
 {
     protected Connection connection = null;
     protected Gson gson;
+    private int DEFAULT_ROWS = 100;
 
     /**
     * Constructs a new Client for making requests to a remote CKAN instance.
@@ -250,26 +251,6 @@ public final class Client
     public void deleteGroup(String name, boolean debug) throws CKANException
     {
         getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/group_delete","{\"id\":\""+name+"\"}",debug),"deleteGroup");
-    }
-
-    /**
-    * Uses the provided search term to find datasets on the server
-    *
-    * Takes the provided query and locates those datasets that match the query
-    *
-    * @param  query The search terms
-    * @returns A SearchResults object that contains a count and the objects
-    * @throws A CKANException if the request fails
-    */
-    public DatasetSearchList findDatasets(String query) throws CKANException
-    {
-        return findDatasets(query,false);
-    }
-    
-    public DatasetSearchList findDatasets(String query, boolean debug) throws CKANException
-    {
-        DatasetSearchResult sr = getGsonObjectFromJson(DatasetSearchResult.class,postAndReturnTheJSON("/api/action/package_search","{\"q\":\""+query+"\"}",debug),"findDatasets");
-        return sr.result;
     }
 
     /********************/
@@ -540,11 +521,6 @@ public final class Client
 
     /********************/ /** WIP **/
 
-    /*public LicenceList getLicenceList() throws CKANException
-    {
-        return getLicenceList(false);
-    }*/
-
     public void getMemberList(String id, String object_type, String capacity, boolean debug) throws CKANException
     {
         getGsonObjectFromJson(LicenceList.class,postAndReturnTheJSON("/api/action/member_list","{\"id\":\""+id+"\",\"object_type\":\""+object_type+"\",\"capacity\":\""+capacity+"\"}",debug),"getMemberList");
@@ -562,6 +538,25 @@ public final class Client
         return getGsonObjectFromJson(ActivityList.class,postAndReturnTheJSON("/api/action/package_activity_list","{\"id\":\""+id+"\"}",debug),"getPackageActivityList");
     }
 
+    /********************/  /** WIP **/
+
+    public void getPackageRelationships(String id, boolean debug) throws CKANException
+    {
+        getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/package_relationships_list","{\"id\":\""+id+"\"}",debug),"getPackageRelationships");
+    }
+    
+    /********************/
+
+    public RevisionList getPackageRevisions(String id) throws CKANException
+    {
+        return getPackageRevisions(id,false);
+    }
+
+    public RevisionList getPackageRevisions(String id, boolean debug) throws CKANException
+    {
+        return getGsonObjectFromJson(RevisionList.class,postAndReturnTheJSON("/api/action/package_revision_list","{\"id\":\""+id+"\"}",debug),"getPackageRevisions");
+    }
+    
     /********************/
 
     public Resource getResource(String id) throws CKANException
@@ -724,6 +719,38 @@ public final class Client
          */
         String id = uid!=null&&!uid.equals("")?uid:name!=null&&!name.equals("")?name:"";
         return getUser(id,debug);
+    }
+
+    /********************/ /** WIP **/
+
+    public DatasetSearchResult searchDatasets(String q) throws CKANException
+    {
+        return searchDatasets(q,"",DEFAULT_ROWS,false);
+    }
+
+    public DatasetSearchResult searchDatasets(String q, boolean debug) throws CKANException
+    {
+        return searchDatasets(q,"",DEFAULT_ROWS,debug);
+    }
+
+    public DatasetSearchResult searchDatasets(String q, String filters) throws CKANException
+    {
+        return searchDatasets(q,filters,DEFAULT_ROWS,false);
+    }
+
+    public DatasetSearchResult searchDatasets(String q, String filters, boolean debug) throws CKANException
+    {
+        return searchDatasets(q,filters,DEFAULT_ROWS,debug);
+    }
+
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows) throws CKANException
+    {
+        return searchDatasets(q,filters,rows,false);
+    }
+
+    public DatasetSearchResult searchDatasets(String q, String filters, int rows, boolean debug) throws CKANException
+    {
+        return getGsonObjectFromJson(DatasetSearchResult.class,postAndReturnTheJSON("/api/action/package_search","{\"q\":\""+q+"\",\"fq\":\""+filters+"\",\"rows\":\""+rows+"\"}",debug),"searchPackages");
     }
 }
 
