@@ -31,6 +31,7 @@ import org.ckan.resource.impl.Resource;
 import org.ckan.resource.impl.Revision;
 import org.ckan.resource.impl.User;
 import org.ckan.result.CKANResult;
+import org.ckan.result.impl.ActivityResult;
 import org.ckan.result.list.impl.DatasetList;
 import org.ckan.result.impl.BooleanResult;
 import org.ckan.result.impl.IntegerResult;
@@ -224,19 +225,19 @@ public final class Client
         return json;
     }
 
-    protected <T> T getAGsonResult(Class<T> cls, String uri, String jsonParams, String action) throws CKANException
+    protected <T> T getGsonResult(Class<T> cls, String uri, String jsonParams, String action) throws CKANException
     {
         return getGsonObjectFromJson(cls,postAndReturnTheJSON(uri,jsonParams),action);
     }
     
-    protected DatasetList getADatasetList(String uri, String jsonParams, String action) throws CKANException
+    protected DatasetList getDatasetList(String uri, String jsonParams, String action) throws CKANException
     {
-        return getAGsonResult(DatasetList.class,uri,jsonParams,action);
+        return getGsonResult(DatasetList.class,uri,jsonParams,action);
     }
 
-    protected UserList getAUserList(String uri, String jsonParams, String action) throws CKANException
+    protected UserList getUserList(String uri, String jsonParams, String action) throws CKANException
     {
-        return getAGsonResult(UserList.class,uri,jsonParams,action);
+        return getGsonResult(UserList.class,uri,jsonParams,action);
     }
     
     public Gson getGsonObject()
@@ -245,8 +246,16 @@ public final class Client
     }
     
     /*********************************************************************************************/
-    
-    
+
+    /** Activity_renders
+     * https://github.com/icmurray/ckan/blob/master/ckan/logic/action/get.py
+     **/
+
+    public void createActivity(String userId, String objectId, String activityType) throws CKANException
+    {
+        getGsonObjectFromJson(ActivityResult.class,postAndReturnTheJSON("/api/action/activity_create","{\"user_id\":\""+userId+"\",\"object_id\":\""+objectId+"\",\"activity_type\":\""+activityType+"\"}"),"createActivity");
+    }
+
     /**
     * Creates a dataset on the server
     *
@@ -337,7 +346,7 @@ public final class Client
 
     public DatasetList getCurrentPackageListWithResources(int limit, int page) throws CKANException
     {
-        return getADatasetList("/api/action/current_package_list_with_resources","{\"limit\":\""+limit+"\",\"page\":\""+page+"\"}","getCurrentPackageListWithResources");
+        return getDatasetList("/api/action/current_package_list_with_resources","{\"limit\":\""+limit+"\",\"page\":\""+page+"\"}","getCurrentPackageListWithResources");
     }
     
     /********************/
@@ -365,7 +374,7 @@ public final class Client
 
     public DatasetList getDatasetFolloweeList(String id) throws CKANException
     {
-        return getADatasetList("/api/action/dataset_followee_list","{\"id\":\""+id+"\"}","getDatasetFolloweeList");
+        return getDatasetList("/api/action/dataset_followee_list","{\"id\":\""+id+"\"}","getDatasetFolloweeList");
     }
 
     /********************/
@@ -379,7 +388,7 @@ public final class Client
 
     public DatasetList getDatasetFollowerList(String id) throws CKANException
     {
-        return getADatasetList("/api/action/dataset_follower_list","{\"id\":\""+id+"\"}","getDatasetFollowerList");
+        return getDatasetList("/api/action/dataset_follower_list","{\"id\":\""+id+"\"}","getDatasetFollowerList");
     }
 
     /**
@@ -396,6 +405,13 @@ public final class Client
     {
         DatasetResult dr = getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_show","{\"id\":\""+name+"\"}"),"getDataset");
         return dr.result;
+    }
+
+    /********************/
+
+    public StringList getDatasetList() throws CKANException
+    {
+        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/package_list","{}"),"getDatasetList");
     }
 
     /********************/
@@ -598,7 +614,21 @@ public final class Client
 
     public UserList getUserAutocomplete(String query, int limit) throws CKANException
     {
-        return getAUserList("/api/action/user_autocomplete","{\"q\":\""+query+"\",\"limit\":\""+limit+"\"}","getUserAutocomplete");
+        return getUserList("/api/action/user_autocomplete","{\"q\":\""+query+"\",\"limit\":\""+limit+"\"}","getUserAutocomplete");
+    }
+
+    /********************/
+
+    public IntegerResult getUserFolloweeCount(String id) throws CKANException
+    {
+        return getGsonObjectFromJson(IntegerResult.class,postAndReturnTheJSON("/api/action/user_followee_count","{\"id\":\""+id+"\"}"),"getUserFolloweeCount");
+    }
+
+    /********************/
+
+    public UserList getUserFolloweeList(String id) throws CKANException
+    {
+        return getUserList("/api/action/user_followee_list","{\"id\":\""+id+"\"}","getUserFolloweeList");
     }
 
     /********************/
@@ -612,14 +642,14 @@ public final class Client
 
     public UserList getUserFollowerList(String id) throws CKANException
     {
-        return getAUserList("/api/action/user_follower_list","{\"id\":\""+id+"\"}","getUserFollowerList");
+        return getUserList("/api/action/user_follower_list","{\"id\":\""+id+"\"}","getUserFollowerList");
     }
 
     /********************/
 
     public UserList getUserList(String query, User.OrderBy orderBy) throws CKANException
     {
-        return getAUserList("/api/action/user_list","{\"q\":\""+query+"\",\"order_by\":\""+orderBy+"\"}","getUserList");
+        return getUserList("/api/action/user_list","{\"q\":\""+query+"\",\"order_by\":\""+orderBy+"\"}","getUserList");
     }
     
     /********************/
