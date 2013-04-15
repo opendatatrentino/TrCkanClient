@@ -56,6 +56,8 @@ Very simple example to connect to datahub, search for datasets and then get deta
         System.out.println(ds);
 </pre>
 
+If the debug output is a bit too garbled for your liking, try copying and pasting into [this](http://jsbeautifier.org/) which makes reading the response a lot easier
+
 ACTIONS API
 -----------
 
