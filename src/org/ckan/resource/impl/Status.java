@@ -27,7 +27,82 @@ import org.ckan.resource.CKANResource;
  */
 public class Status extends CKANResource
 {
+    private String date_done;
+    private String entity_id;
+    private String entity_type;
+    private String error;
+    private String id;
+    private String key;
+    private String last_updated;
+    private String state;
     private String status;
+    private String task_type;
+    private String traceback;
+    private String value;
+
+    public String getDate_done() {
+        return date_done;
+    }
+
+    public void setDate_done(String date_done) {
+        this.date_done = date_done;
+    }
+
+    public String getEntity_id() {
+        return entity_id;
+    }
+
+    public void setEntity_id(String entity_id) {
+        this.entity_id = entity_id;
+    }
+
+    public String getEntity_type() {
+        return entity_type;
+    }
+
+    public void setEntity_type(String entity_type) {
+        this.entity_type = entity_type;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getLast_updated() {
+        return last_updated;
+    }
+
+    public void setLast_updated(String last_updated) {
+        this.last_updated = last_updated;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     public String getStatus() {
         return status;
@@ -35,5 +110,34 @@ public class Status extends CKANResource
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTask_type() {
+        return task_type;
+    }
+
+    public void setTask_type(String task_type) {
+        this.task_type = task_type;
+    }
+
+    public String getTraceback() {
+        return traceback;
+    }
+
+    public void setTraceback(String traceback) {
+        this.traceback = traceback;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String toString()
+    {
+        return "<Status:"+this.id+","+this.status+","+this.state+","+this.last_updated+">";
     }
 }
