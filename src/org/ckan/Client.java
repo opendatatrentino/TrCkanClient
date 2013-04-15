@@ -41,6 +41,7 @@ import org.ckan.result.impl.GroupResult;
 import org.ckan.result.impl.DatasetSearchResult;
 import org.ckan.result.impl.MembershipResult;
 import org.ckan.result.impl.ResourceResult;
+import org.ckan.result.impl.ResourceStatusResult;
 import org.ckan.result.impl.RevisionResult;
 import org.ckan.result.impl.UserResult;
 import org.ckan.result.list.impl.ActivityList;
@@ -570,10 +571,9 @@ public final class Client
 
     /********************/ /** WIP **/
 
-    public Resource getResourceStatus(String id) throws CKANException
+    public ResourceStatusResult getResourceStatus(String id) throws CKANException
     {
-        ResourceResult rr = getGsonObjectFromJson(ResourceResult.class,postAndReturnTheJSON("/api/action/resource_status_show","{\"id\":\""+id+"\"}"),"getResourceStatus");
-        return rr.result;
+        return getGsonObjectFromJson(ResourceStatusResult.class,postAndReturnTheJSON("/api/action/resource_status_show","{\"id\":\""+id+"\"}"),"getResourceStatus");
     }
 
     /********************/ /** Does this need a site id as a param??? **/

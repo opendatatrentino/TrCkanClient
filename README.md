@@ -26,6 +26,7 @@ Very simple example to connect to datahub, search for datasets and then get deta
 <pre>
         org.ckan.Client client = new org.ckan.Client(new org.ckan.Connection("http://datahub.io"),"YOUR_API_KEY");
 
+        Dataset ds = null;
         DatasetSearchResult sr = null;
         try
         {
@@ -44,7 +45,6 @@ Very simple example to connect to datahub, search for datasets and then get deta
             System.out.println(ds);
         }
 
-        Dataset ds = null;
         try
         {
             ds = client.debugThis().getDataset("test-dataset");
