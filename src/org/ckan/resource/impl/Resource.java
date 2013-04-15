@@ -38,6 +38,7 @@ public class Resource extends CKANResource
     private String hash;
     private String id;
     private String last_modified;
+    private String message;
     private String mimetype;
     private String mimetype_inner;
     private String name;
@@ -53,6 +54,14 @@ public class Resource extends CKANResource
     private String url;
     private String webstore_last_updated;
     private String webstore_url;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
     
         
 /*tracking_summary: {

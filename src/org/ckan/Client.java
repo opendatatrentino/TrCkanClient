@@ -247,6 +247,8 @@ public final class Client
     
     /*********************************************************************************************/
 
+    /** WIP **/
+    
     /** Activity_renders
      * https://github.com/icmurray/ckan/blob/master/ckan/logic/action/get.py
      **/
@@ -568,10 +570,10 @@ public final class Client
 
     /********************/ /** WIP **/
 
-    public void getResourceStatus(String id) throws CKANException
+    public Resource getResourceStatus(String id) throws CKANException
     {
-        getGsonObjectFromJson(ResourceResult.class,postAndReturnTheJSON("/api/action/resource_status_show","{\"id\":\""+id+"\"}"),"getResourceStatus");
-        /*return rr.result;*/
+        ResourceResult rr = getGsonObjectFromJson(ResourceResult.class,postAndReturnTheJSON("/api/action/resource_status_show","{\"id\":\""+id+"\"}"),"getResourceStatus");
+        return rr.result;
     }
 
     /********************/ /** Does this need a site id as a param??? **/
