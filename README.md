@@ -18,6 +18,44 @@ I'm currently building against (but other versions may work):
 * [HttpClient 4.2.3](http://hc.apache.org/downloads.cgi)
 * [HttpCore 4.2.2](http://hc.apache.org/downloads.cgi)
 
+Using the code
+--------------
+
+Very simple example to connect to datahub, search for datasets and then get details for a given dataset with (optional) debugging on (debugging will show you what is returned on the HTTP response)
+
+<pre>
+        org.ckan.Client client = new org.ckan.Client(new org.ckan.Connection("http://datahub.io"),"YOUR_API_KEY");
+
+        DatasetSearchResult sr = null;
+        try
+        {
+            sr = client.searchDatasets("test-dataset");
+        }
+        catch(Exception cke)
+        {
+            System.out.println(cke);
+        }
+        DatasetSearchList dsl = sr.result;
+        List<Dataset> results = dsl.results;
+        Iterator<Dataset> iterator = results.iterator();
+        while(iterator.hasNext())
+        {
+            ds = iterator.next();
+            System.out.println(ds);
+        }
+
+        Dataset ds = null;
+        try
+        {
+            ds = client.debugThis().getDataset("test-dataset");
+        }
+        catch(CKANException cke)
+        {
+            System.out.println(cke);
+        }
+        System.out.println(ds);
+</pre>
+
 ACTIONS API
 -----------
 
