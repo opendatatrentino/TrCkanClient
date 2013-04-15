@@ -4,7 +4,7 @@ CKANClient-J
 A (very much) work in progress
 ------------------------------
 
-Provides an interface to a [CKAN 1.8](http://ckan.org) installation.
+Provides an interface to a [CKAN 1.8+](http://ckan.org) installation.
 
 Methods currently implemented (some more thoroughly than others... at the moment):
 
