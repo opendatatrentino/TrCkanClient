@@ -94,9 +94,9 @@ ACTIONS API
 * getPackageRelationships - WIP
 * getPackageRevisions
 * getResource
-* getResourceStatus - WIP
+* getResourceStatus
 * getRevision
-* getRevisionList - WIP
+* getRevisionList
 * getRolesList - WIP
 * getUser
 * getUserActivityList
@@ -116,4 +116,5 @@ Notes to self:
 * Add param objects or keep overloaded methods?
 * Refactor code again once the API methods are complete
 * Some people are prob not gonna like Allman braces/indenting in java
+* Look at the 301 issue
 

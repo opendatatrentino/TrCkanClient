@@ -673,6 +673,16 @@ public final class Client
         return getUser(id);
     }
 
+    public void getVocabulary(String id) throws CKANException
+    {
+        getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/vocabulary_show","{\"id\":\""+id+"\"}"),"getVocabulary");
+    }
+    
+    public void getVocabularyList() throws CKANException
+    {
+        getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/vocabulary_list","{}"),"getVocabularyList");
+    }
+
     /********************/ /** WIP **/
 
     public DatasetSearchResult searchDatasets(String q) throws CKANException
