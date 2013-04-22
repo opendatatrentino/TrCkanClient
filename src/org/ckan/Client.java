@@ -39,6 +39,7 @@ import org.ckan.result.impl.StringResult;
 import org.ckan.result.impl.DatasetResult;
 import org.ckan.result.impl.GroupResult;
 import org.ckan.result.impl.DatasetSearchResult;
+import org.ckan.result.impl.FollowingResult;
 import org.ckan.result.impl.MembershipResult;
 import org.ckan.result.impl.ResourceResult;
 import org.ckan.result.impl.ResourceStatusResult;
@@ -324,6 +325,20 @@ public final class Client
         getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/group_delete","{\"id\":\""+name+"\"}"),"deleteGroup");
     }
 
+    /********************/
+
+    public FollowingResult followDataset(String id) throws CKANException
+    {
+        return getGsonObjectFromJson(FollowingResult.class,postAndReturnTheJSON("/api/action/follow_dataset","{\"id\":\""+id+"\"}"),"followDataset");
+    }
+
+    /********************/
+
+    public FollowingResult followUser(String id) throws CKANException
+    {
+        return getGsonObjectFromJson(FollowingResult.class,postAndReturnTheJSON("/api/action/follow_user","{\"id\":\""+id+"\"}"),"followUser");
+    }
+    
     /********************/
 
     public ActivityList getActivityDetailList(String id) throws CKANException
@@ -673,6 +688,8 @@ public final class Client
         return getUser(id);
     }
 
+    /** WIP **/
+    
     public void getVocabulary(String id) throws CKANException
     {
         getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/vocabulary_show","{\"id\":\""+id+"\"}"),"getVocabulary");
@@ -683,7 +700,7 @@ public final class Client
         getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/vocabulary_list","{}"),"getVocabularyList");
     }
 
-    /********************/ /** WIP **/
+    /********************/ 
 
     public DatasetSearchResult searchDatasets(String q) throws CKANException
     {
@@ -742,6 +759,20 @@ public final class Client
             facetField = new ArrayList<String>();
         }
         return getGsonObjectFromJson(DatasetSearchResult.class,postAndReturnTheJSON("/api/action/package_search","{\"q\":\""+q+"\",\"fq\":\""+filters+"\",\"rows\":\""+rows+"\",\"sort\":\""+sort+"\",\"start\":\""+start+"\",\"facet\":\""+isFacetedResult+"\",\"facet.mincount\":\""+facetMinCount+"\",\"facet.limit\":\""+facetLimit+"\",\"facet.field\":\""+gson.toJson(facetField)+"\"}"),"searchPackages");
+    }
+    
+    /********************/
+
+    public FollowingResult unfollowDataset(String id) throws CKANException
+    {
+        return getGsonObjectFromJson(FollowingResult.class,postAndReturnTheJSON("/api/action/unfollow_dataset","{\"id\":\""+id+"\"}"),"unfollowDataset");
+    }
+    
+    /********************/
+
+    public FollowingResult unfollowUser(String id) throws CKANException
+    {
+        return getGsonObjectFromJson(FollowingResult.class,postAndReturnTheJSON("/api/action/unfollow_user","{\"id\":\""+id+"\"}"),"unfollowUser");
     }
 }
 

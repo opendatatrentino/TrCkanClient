@@ -69,6 +69,8 @@ ACTIONS API
 * deleteDataset
 * deleteGroup
 * --findDatasets-- -> replaced by searchDatasets
+* followDataset
+* followUser
 * getActivityDetailList
 * getAmFollowingDataset
 * getAmFollowingUser
@@ -105,8 +107,11 @@ ACTIONS API
 * getUserFollowerCount
 * getUserFollowerList
 * getUserList
+* getVocabulary - WIP
+* getVocabularyList - WIP
 * searchDatasets - WIP
-
+* unfollowDataset
+* unfollowUser
 
 -------
 
