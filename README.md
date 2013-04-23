@@ -6,8 +6,6 @@ A (very much) work in progress
 
 Provides an interface to a [CKAN 1.8+](http://ckan.org) installation and is concentrating on the version 3 API
 
-Methods currently implemented (some more thoroughly than others... at the moment):
-
 Dependencies
 ------------
 
@@ -60,6 +58,8 @@ If the debug output is a bit too garbled for your liking, try copying and pastin
 
 ACTIONS API
 -----------
+
+Methods currently implemented (some more thoroughly than others... at the moment):
 
 (WIP = Work In Progress)
 
