@@ -299,6 +299,18 @@ public final class Client
         return getGsonObjectFromJson(MembershipResult.class,this.postAndReturnTheJSON("/api/action/member_create","{\"id\":\""+id+"\",\"object\":\""+object+"\",\"object_type\":\""+object_type+"\",\"capacity\":\""+capacity+"\"}"),"createMember");
     }
     
+    /** WIP **/
+
+    public void createRelated(String title, String type) throws CKANException
+    {
+        getGsonObjectFromJson(StringResult.class,this.postAndReturnTheJSON("/api/action/related_create","{\"dataset_id\":\"\",\"description\":\"\",\"id\":\"\",\"title\":\""+title+"\",\"type\":\""+type+"\",\"url\":\"\"}"),"createRelated");
+    }
+    
+    public void createRelated(String dataset_id, String description, String id, String image_url, String title, String type, String url) throws CKANException
+    {
+        getGsonObjectFromJson(StringResult.class,this.postAndReturnTheJSON("/api/action/related_create","{\"dataset_id\":\""+dataset_id+"\",\"description\":\""+description+"\",\"id\":\""+id+"\",\"title\":\""+title+"\",\"type\":\""+type+"\",\"url\":\""+url+"\"}"),"createRelated");
+    }
+    
     /**
     * Deletes a dataset
     *
@@ -323,6 +335,27 @@ public final class Client
     public void deleteGroup(String name) throws CKANException
     {
         getGsonObjectFromJson(GroupResult.class,postAndReturnTheJSON("/api/action/group_delete","{\"id\":\""+name+"\"}"),"deleteGroup");
+    }
+
+    /********************/
+
+    public void deleteRelated(String id) throws CKANException
+    {
+        getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/related_delete","{\"id\":\""+id+"\"}"),"deleteRelated");
+    }
+
+    /********************/
+
+    public void deleteTaskStatus(String id) throws CKANException
+    {
+        getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/task_status_delete","{\"id\":\""+id+"\"}"),"deleteTaskStatus");
+    }
+
+    /********************/
+    
+    public void deleteVocabulary(String id) throws CKANException
+    {
+        getGsonObjectFromJson(StringResult.class,postAndReturnTheJSON("/api/action/vocabulary_delete","{\"id\":\""+id+"\"}"),"deleteVocabulary");
     }
 
     /********************/

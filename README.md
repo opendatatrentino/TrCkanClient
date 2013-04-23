@@ -66,8 +66,12 @@ Methods currently implemented (some more thoroughly than others... at the moment
 * createDataset
 * createGroup
 * createMember
+* createRelated - WIP
 * deleteDataset
 * deleteGroup
+* deleteRelated -
+* deleteTaskStatus -
+* deleteVocabulary -
 * --findDatasets-- -> replaced by searchDatasets
 * followDataset
 * followUser
