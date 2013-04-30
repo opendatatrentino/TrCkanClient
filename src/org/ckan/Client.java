@@ -303,7 +303,8 @@ public final class Client
 
     public void createRelated(String title, String type) throws CKANException
     {
-        getGsonObjectFromJson(StringResult.class,this.postAndReturnTheJSON("/api/action/related_create","{\"dataset_id\":\"\",\"description\":\"\",\"id\":\"\",\"title\":\""+title+"\",\"type\":\""+type+"\",\"url\":\"\"}"),"createRelated");
+        //getGsonObjectFromJson(StringResult.class,this.postAndReturnTheJSON("/api/action/related_create","{\"dataset_id\":\"\",\"description\":\"\",\"id\":\"\",\"title\":\""+title+"\",\"type\":\""+type+"\",\"url\":\"\"}"),"createRelated");
+        getGsonObjectFromJson(StringResult.class,this.postAndReturnTheJSON("/api/action/related_create","{\"title\":\""+title+"\",\"type\":\""+type+"\"}"),"createRelated");
     }
     
     public void createRelated(String dataset_id, String description, String id, String image_url, String title, String type, String url) throws CKANException
@@ -806,6 +807,11 @@ public final class Client
     public FollowingResult unfollowUser(String id) throws CKANException
     {
         return getGsonObjectFromJson(FollowingResult.class,postAndReturnTheJSON("/api/action/unfollow_user","{\"id\":\""+id+"\"}"),"unfollowUser");
+    }
+    
+    public DatasetResult updateDataset(Dataset ds) throws CKANException
+    {
+        return getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_update",gson.toJson(ds)),"updateDataset");
     }
 }
 

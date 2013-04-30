@@ -116,6 +116,7 @@ Methods currently implemented (some more thoroughly than others... at the moment
 * searchDatasets - WIP
 * unfollowDataset
 * unfollowUser
+* updateDataset
 
 -------
 
