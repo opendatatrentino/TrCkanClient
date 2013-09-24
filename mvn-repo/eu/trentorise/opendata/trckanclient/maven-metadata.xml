@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>eu.trentorise.opendata</groupId>
+  <artifactId>trckanclient</artifactId>
+  <versioning>
+    <versions>
+      <version>1.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20130924123336</lastUpdated>
+  </versioning>
+</metadata>
