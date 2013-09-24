@@ -19,8 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.ckan.result.list.impl;
 
 import java.util.List;
+
 import org.ckan.resource.impl.Licence;
 import org.ckan.result.CKANResult;
+
 
 /**
  *

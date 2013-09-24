@@ -20,7 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.ckan.resource.impl;
 
 import java.util.List;
+
 import org.ckan.resource.CKANResource;
+
 
 /**
  * Represents a CKAN group

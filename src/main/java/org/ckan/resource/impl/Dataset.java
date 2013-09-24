@@ -19,7 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.ckan.resource.impl;
 
 import com.google.gson.annotations.SerializedName;
+
+
 import java.util.List;
+
 import org.ckan.resource.CKANResource;
 
 /**

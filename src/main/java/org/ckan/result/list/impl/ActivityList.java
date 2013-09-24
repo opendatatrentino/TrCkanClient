@@ -16,10 +16,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.ckan.resource.impl;
+package org.ckan.result.list.impl;
 
 import java.util.List;
-import org.ckan.resource.CKANResource;
+
+import org.ckan.resource.impl.Activity;
+import org.ckan.result.CKANResult;
+
 
 /**
  *
@@ -27,13 +30,7 @@ import org.ckan.resource.CKANResource;
  * @version     1.8
  * @since       2013-02-18
  */
-public class Revision extends CKANResource
+public class ActivityList extends CKANResult
 {
-    public String approved_timestamp;
-    public String author;
-    public List<Group> groups;
-    public String id;
-    public String message;
-    public List<Dataset> packages;
-    public String timestamp;
+    public List<Activity> result;
 }

@@ -19,8 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.ckan.result.list.impl;
 
 import java.util.List;
-import org.ckan.resource.impl.Activity;
-import org.ckan.result.CKANResult;
+
+import org.ckan.resource.CKANResource;
+import org.ckan.resource.impl.Dataset;
+import org.ckan.resource.impl.Facet;
+import org.ckan.resource.impl.SearchFacet;
+
 
 /**
  *
@@ -28,7 +32,10 @@ import org.ckan.result.CKANResult;
  * @version     1.8
  * @since       2013-02-18
  */
-public class ActivityList extends CKANResult
+public class DatasetSearchList extends CKANResource
 {
-    public List<Activity> result;
+    public int count;
+    public SearchFacet search_facets;
+    public Facet facets;
+    public List<Dataset> results;
 }

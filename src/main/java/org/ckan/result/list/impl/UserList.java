@@ -16,10 +16,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.ckan.resource.impl;
+package org.ckan.result.list.impl;
 
-import com.google.gson.annotations.SerializedName;
-import org.ckan.resource.CKANResource;
+import java.util.List;
+
+import org.ckan.resource.impl.User;
+import org.ckan.result.CKANResult;
+
 
 /**
  *
@@ -27,8 +30,7 @@ import org.ckan.resource.CKANResource;
  * @version     1.8
  * @since       2013-02-18
  */
-public class Data extends CKANResource
+public class UserList extends CKANResult
 {
-    @SerializedName("package")
-    public Dataset dataset;
+    public List<User> result;
 }

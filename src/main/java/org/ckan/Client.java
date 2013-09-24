@@ -19,33 +19,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.ckan;
 
-import org.ckan.resource.impl.Dataset;
-import org.ckan.resource.impl.Group;
 import com.google.gson.Gson;
+
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+
+import org.ckan.resource.impl.Dataset;
+import org.ckan.resource.impl.Group;
 import org.ckan.resource.impl.Resource;
 import org.ckan.resource.impl.Revision;
 import org.ckan.resource.impl.User;
 import org.ckan.result.CKANResult;
 import org.ckan.result.impl.ActivityResult;
-import org.ckan.result.list.impl.DatasetList;
 import org.ckan.result.impl.BooleanResult;
-import org.ckan.result.impl.IntegerResult;
-import org.ckan.result.impl.StringResult;
 import org.ckan.result.impl.DatasetResult;
-import org.ckan.result.impl.GroupResult;
 import org.ckan.result.impl.DatasetSearchResult;
 import org.ckan.result.impl.FollowingResult;
+import org.ckan.result.impl.GroupResult;
+import org.ckan.result.impl.IntegerResult;
 import org.ckan.result.impl.MembershipResult;
 import org.ckan.result.impl.ResourceResult;
 import org.ckan.result.impl.ResourceStatusResult;
 import org.ckan.result.impl.RevisionResult;
+import org.ckan.result.impl.StringResult;
 import org.ckan.result.impl.UserResult;
 import org.ckan.result.list.impl.ActivityList;
+import org.ckan.result.list.impl.DatasetList;
 import org.ckan.result.list.impl.LicenceList;
 import org.ckan.result.list.impl.RevisionList;
 import org.ckan.result.list.impl.StringList;
@@ -221,7 +223,6 @@ public final class Client
         String json = this.connection.post(uri,jsonParams);
         if(DEBUG_ALL_CALLS||DEBUG)
         {
-            System.out.println(json);
             DEBUG = false; /** Reset debugging to default (false) **/
         }
         return json;

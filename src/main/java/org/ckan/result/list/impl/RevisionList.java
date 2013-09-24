@@ -19,8 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.ckan.result.list.impl;
 
 import java.util.List;
-import org.ckan.resource.impl.User;
+
+import org.ckan.resource.impl.Revision;
 import org.ckan.result.CKANResult;
+
 
 /**
  *
@@ -28,7 +30,7 @@ import org.ckan.result.CKANResult;
  * @version     1.8
  * @since       2013-02-18
  */
-public class UserList extends CKANResult
+public class RevisionList extends CKANResult
 {
-    public List<User> result;
+    public List<Revision> result;
 }

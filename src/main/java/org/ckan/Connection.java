@@ -41,6 +41,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.impl.conn.SingleClientConnManager;
@@ -107,7 +108,7 @@ public final class Connection {
         String body = "";
 
     BasicClientConnectionManager bccm = null;
-    ClientConnectionManager cm = null;
+    //ClientConnectionManager cm = null;
     try{
         /***********************************************************************/
         SSLContext sslContext = SSLContext.getInstance("SSL");
@@ -132,15 +133,15 @@ public final class Connection {
         Scheme httpsScheme = new Scheme("https", 443, sf);
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(httpsScheme);
-        //bccm = new BasicClientConnectionManager(schemeRegistry);
+        bccm = new BasicClientConnectionManager(schemeRegistry);
         // apache HttpClient version >4.2 should use BasicClientConnectionManager
-        cm = new SingleClientConnManager(schemeRegistry);
+       // cm = new SingleClientConnManager(schemeRegistry);
         /***********************************************************************/
     }catch(KeyManagementException kme){System.out.println("Con ex: "+kme.getMessage());}
     catch(NoSuchAlgorithmException nsae){System.out.println("Con ex: "+nsae.getMessage());}
 
-        //HttpClient httpclient = new DefaultHttpClient(cm);
-        HttpClient httpclient = new DefaultHttpClient();
+        //HttpClient httpclient = new DefaultHttpClient(bccm);
+    HttpClient httpclient = HttpClientBuilder.create().build();
         try {
             HttpPost postRequest = new HttpPost(url.toString());
             postRequest.setHeader( "X-CKAN-API-Key", this._apikey );
