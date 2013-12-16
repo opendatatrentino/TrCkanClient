@@ -6,7 +6,7 @@ Java client for dati.trentino.it ckan instance. Targets Ckan 2.2+ . It _may_ wor
 Forked from [andmar8 Ckan-Java-Client](https://github.com/andmar8/CKAN-Java-Client). We added
   * ckan 2.2+ compliance
   * dependency handling with Maven
-  * 
+  * support for categories
 
 License: AGPL v3
 
