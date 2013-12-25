@@ -52,6 +52,8 @@ import org.ckan.result.list.impl.LicenceList;
 import org.ckan.result.list.impl.RevisionList;
 import org.ckan.result.list.impl.StringList;
 import org.ckan.result.list.impl.UserList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The primary interface to this package the Client class is responsible
@@ -71,6 +73,7 @@ public final class Client
     private int DEFAULT_SEARCH_MAX_RETURNED_ROWS = 100;
     private boolean DEBUG = false;
     private boolean DEBUG_ALL_CALLS = false;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Client(){}
     
@@ -85,7 +88,7 @@ public final class Client
     {
         this.connection = c;
         this.connection.setApiKey(apikey);
-        this.gson = new Gson();
+        this.gson = new Gson();    
     }
 
     /**
@@ -463,7 +466,7 @@ public final class Client
     /********************/
 
     public StringList getDatasetList() throws CKANException
-    {
+    {                
         return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/package_list","{}"),"getDatasetList");
     }
 

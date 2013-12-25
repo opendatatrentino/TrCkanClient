@@ -45,6 +45,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.impl.conn.SingleClientConnManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connection holds the connection details for this session
@@ -58,6 +60,7 @@ public final class Connection {
     private String m_host;
     private int m_port;
     private String _apikey = null;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Connection(  ) {
         this("http://datahub.io", 80);
@@ -99,7 +102,9 @@ public final class Connection {
         URL url = null;
 
         try {
-            url = new URL( this.m_host + ":" + this.m_port + path);
+            String urlString = this.m_host + ":" + this.m_port + path;
+            logger.debug("posting " + urlString);
+            url = new URL( urlString);
         } catch ( MalformedURLException mue ) {
             System.err.println(mue);
             return null;
