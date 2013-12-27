@@ -10,3 +10,4 @@ test_results/*
 /build
 /manifest.mf
 /src/test/resources/log4j.properties
+/target
