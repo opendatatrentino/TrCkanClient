@@ -9,3 +9,4 @@ test_results/*
 /dist
 /build
 /manifest.mf
+/src/test/resources/log4j.properties
