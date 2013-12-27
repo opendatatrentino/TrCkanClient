@@ -227,7 +227,7 @@ public final class Client
         if(DEBUG_ALL_CALLS||DEBUG)
         {
             DEBUG = false; /** Reset debugging to default (false) **/
-        }
+        }        
         return json;
     }
 
@@ -459,15 +459,16 @@ public final class Client
     */
     public Dataset getDataset(String name) throws CKANException
     {
-        DatasetResult dr = getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/action/package_show","{\"id\":\""+name+"\"}"),"getDataset");
+        DatasetResult dr = getGsonObjectFromJson(DatasetResult.class,postAndReturnTheJSON("/api/3/action/package_show","{\"id\":\""+name+"\"}"),"getDataset");
         return dr.result;
     }
 
     /********************/
 
     public StringList getDatasetList() throws CKANException
-    {                
-        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/action/package_list","{}"),"getDatasetList");
+    {        
+        // tr added 3 to action api
+        return getGsonObjectFromJson(StringList.class,postAndReturnTheJSON("/api/3/action/package_list","{}"),"getDatasetList");
     }
 
     /********************/
