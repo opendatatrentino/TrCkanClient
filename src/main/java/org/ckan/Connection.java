@@ -180,7 +180,8 @@ public final class Connection {
                     }                    
                     
                     JsonObject jobj = jelement.getAsJsonObject();
-                    StringBuilder urlParams = new StringBuilder("?");
+                    StringBuilder urlParams = new StringBuilder();
+                    boolean first = true;
                     for (Map.Entry<String,JsonElement> entry : jobj.entrySet()) {
                         
                         String param = entry.getValue().toString();
@@ -189,9 +190,11 @@ public final class Connection {
                             strippedParam = param.substring(1, param.length()-1);
                         }
                         
-                        urlParams.append(URLEncoder.encode(entry.getKey(),"UTF-8"))
+                        urlParams.append(first ? "?" : "&")
+                                 .append(URLEncoder.encode(entry.getKey(),"UTF-8"))
                                  .append("=")
                                  .append(URLEncoder.encode(strippedParam, "UTF-8"));                       
+                        first = false;
                     };
                     String getUrl = url.toString() + urlParams.toString();
                     logger.debug("GET url = " + getUrl);
