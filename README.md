@@ -1,7 +1,12 @@
 TrCkanClient 
 ====
 
+Project abandoned and superseded by [Jackan](https://github.com/opendatatrentino/Jackan)
+===
+
 Java client for dati.trentino.it ckan instance. Targets Ckan 2.2+ . It _may_ work with other ckan installations also.
+
+** Status **: abandoned and superseded by [Jackan](https://github.com/opendatatrentino/Jackan)
 
 Forked from [andmar8 Ckan-Java-Client](https://github.com/andmar8/CKAN-Java-Client). We added
   * ckan 2.2+ compliance
